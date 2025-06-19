@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookAIcon, LayoutDashboardIcon } from "lucide-react";
+import { BookAIcon, LayoutDashboardIcon, SettingsIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
@@ -64,7 +64,7 @@ export default function DashboardSidebar({
                 href={"/settings"}
                 className={cn(pathname === "/settings" && "bg-white")}
               >
-                <BookAIcon />
+                <SettingsIcon />
                 <span>Settings</span>
               </Link>
             </SidebarMenuButton>
