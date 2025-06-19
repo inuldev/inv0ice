@@ -1,7 +1,7 @@
 import { signIn } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import SubmitButton from "@/components/SubmitButton";
+import { LoadingButton } from "@/components/LoadingButton";
 import {
   Card,
   CardContent,
@@ -36,7 +36,7 @@ export default async function LoginPage() {
               name="email"
             />
           </div>
-          <SubmitButton title="Login" />
+          <LoadingButton text="Login" />
         </form>
       </CardContent>
     </Card>

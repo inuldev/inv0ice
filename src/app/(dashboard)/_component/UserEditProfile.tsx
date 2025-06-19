@@ -1,16 +1,13 @@
 "use client";
 
-import { z } from "zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { currencyOption } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { onboardingSchema } from "@/lib/zodSchema";
+import SubmitButton from "@/components/SubmitButton";
 import {
   Select,
   SelectContent,
@@ -19,50 +16,57 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface UserEditProfile {
-  firstName: string | undefined;
-  lastName: string | undefined;
-  email: string | null | undefined;
-  currency: string | undefined;
-}
+import { currencyOption } from "@/lib/utils";
+import { onboardingSchema, type OnboardingFormData } from "@/lib/zodSchema";
 
 export default function UserEditProfile({
   firstName,
   lastName,
   email,
   currency,
-}: UserEditProfile) {
+}: {
+  firstName?: string;
+  lastName?: string;
+  email?: string | null;
+  currency?: string;
+}) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<z.infer<typeof onboardingSchema>>({
+  } = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
-      currency: currency,
-      firstName: firstName,
-      lastName: lastName,
+      firstName: firstName ?? "",
+      lastName: lastName ?? "",
+      currency: (currency ?? "USD") as OnboardingFormData["currency"],
     },
   });
 
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const onSubmit = async (data: z.infer<typeof onboardingSchema>) => {
+  const onSubmit = async (data: OnboardingFormData) => {
     try {
       setIsLoading(true);
+      setErrorMessage(null);
+
       const response = await fetch("/api/user", {
-        method: "put",
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      await response.json();
-
-      if (response.status === 200) {
-        router.refresh();
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res.message || "Something went wrong");
       }
-    } catch (error) {
-      console.log(error);
+
+      router.refresh(); // Refresh session & UI
+    } catch (error: any) {
+      setErrorMessage(error.message || "Update failed.");
     } finally {
       setIsLoading(false);
     }
@@ -70,64 +74,77 @@ export default function UserEditProfile({
 
   return (
     <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+      {/* First Name */}
       <div className="grid gap-2">
         <Label>First Name</Label>
         <Input
           placeholder="Inul"
           type="text"
-          {...register("firstName", { required: true })}
+          {...register("firstName")}
           disabled={isLoading}
         />
         {errors.firstName && (
           <p className="text-xs text-red-500">{errors.firstName.message}</p>
         )}
       </div>
+
+      {/* Last Name */}
       <div className="grid gap-2">
         <Label>Last Name</Label>
         <Input
           placeholder="Dev"
           type="text"
-          {...register("lastName", { required: true })}
+          {...register("lastName")}
           disabled={isLoading}
         />
         {errors.lastName && (
           <p className="text-xs text-red-500">{errors.lastName.message}</p>
         )}
       </div>
+
+      {/* Currency */}
       <div className="grid gap-2">
         <Label>Select Currency</Label>
-        <Select
-          defaultValue="USD"
-          {...register("currency")}
-          disabled={isLoading}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select currency" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(currencyOption).map((item: string, index: number) => {
-              return (
-                <SelectItem key={index} value={item}>
-                  {item}
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
+        <Controller
+          name="currency"
+          control={control}
+          render={({ field }) => (
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select currency" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(currencyOption).map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
+
+      {/* Email */}
       <div className="grid gap-2">
         <Label>Email</Label>
         <Input
           placeholder="inuldev@invoice.com"
           type="email"
           value={email ?? ""}
-          required
-          disabled={true}
+          disabled
         />
       </div>
-      <Button disabled={isLoading}>
-        {isLoading ? "Please wait..." : "Update Profile"}
-      </Button>
+
+      {/* Submit Button */}
+      <SubmitButton title="Update Profile" isLoading={isLoading} />
+
+      {/* Error Message */}
+      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
     </form>
   );
 }

@@ -1,14 +1,13 @@
 "use client";
 
-import { z } from "zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import SubmitButton from "@/components/SubmitButton";
 import {
   Card,
   CardContent,
@@ -25,38 +24,46 @@ import {
 } from "@/components/ui/select";
 
 import { currencyOption } from "@/lib/utils";
-import { onboardingSchema } from "@/lib/zodSchema";
+import { onboardingSchema, type OnboardingFormData } from "@/lib/zodSchema";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<z.infer<typeof onboardingSchema>>({
+  } = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       currency: "USD",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof onboardingSchema>) => {
+  const onSubmit = async (data: OnboardingFormData) => {
     try {
       setIsLoading(true);
+      setErrorMessage(null);
+
       const response = await fetch("/api/user", {
-        method: "put",
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      await response.json();
-
-      if (response.status === 200) {
-        router.push("/dashboard");
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res.message || "Something went wrong");
       }
-    } catch (error) {
-      console.log(error);
+
+      router.push("/dashboard");
+    } catch (error: any) {
+      setErrorMessage(error.message || "Finish onboarding failed.");
     } finally {
       setIsLoading(false);
     }
@@ -76,12 +83,13 @@ export default function OnboardingPage() {
         </CardHeader>
         <CardContent>
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+            {/* First Name */}
             <div className="grid gap-2">
               <Label>First Name</Label>
               <Input
                 placeholder="Inul"
                 type="text"
-                {...register("firstName", { required: true })}
+                {...register("firstName")}
                 disabled={isLoading}
               />
               {errors.firstName && (
@@ -90,12 +98,14 @@ export default function OnboardingPage() {
                 </p>
               )}
             </div>
+
+            {/* Last Name */}
             <div className="grid gap-2">
               <Label>Last Name</Label>
               <Input
                 placeholder="Dev"
                 type="text"
-                {...register("lastName", { required: true })}
+                {...register("lastName")}
                 disabled={isLoading}
               />
               {errors.lastName && (
@@ -104,32 +114,41 @@ export default function OnboardingPage() {
                 </p>
               )}
             </div>
+
+            {/* Currency */}
             <div className="grid gap-2">
               <Label>Select Currency</Label>
-              <Select
-                defaultValue="USD"
-                {...register("currency")}
-                disabled={isLoading}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(currencyOption).map(
-                    (item: string, index: number) => {
-                      return (
-                        <SelectItem key={index} value={item}>
+              <Controller
+                name="currency"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue="USD"
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(currencyOption).map((item) => (
+                        <SelectItem key={item} value={item}>
                           {item}
                         </SelectItem>
-                      );
-                    }
-                  )}
-                </SelectContent>
-              </Select>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
-            <Button disabled={isLoading}>
-              {isLoading ? "Please wait..." : "Finish onboarding"}
-            </Button>
+
+            {/* Submit Button */}
+            <SubmitButton title="Finish Onboarding" isLoading={isLoading} />
+
+            {/* Error Message */}
+            {errorMessage && (
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            )}
           </form>
         </CardContent>
       </Card>

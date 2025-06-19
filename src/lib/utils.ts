@@ -11,6 +11,10 @@ export const currencyOption = {
   EUR: "€",
   GBP: "£",
   JPY: "¥",
-};
+} as const;
 
 export type TCurrencyKey = keyof typeof currencyOption;
+
+export const getCurrencySymbol = (code: TCurrencyKey): string => {
+  return currencyOption[code];
+};
