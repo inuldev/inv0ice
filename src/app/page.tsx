@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
+import React from "react";
 
-export default function Home() {
-  return (
-    <Button variant="outline" size="lg" className="mt-10 ml-10">
-      Click Me
-    </Button>
-  );
+function page() {
+  return <div>homepage</div>;
 }
+
+export default page;
