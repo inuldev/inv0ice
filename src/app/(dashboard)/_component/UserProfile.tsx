@@ -23,7 +23,7 @@ export default async function UserProfile() {
           <DialogDescription>Edit your profile details here.</DialogDescription>
         </DialogHeader>
 
-        {/**user profile display and editor */}
+        {/**user profile display and editor*/}
         <UserEditProfile
           firstName={session?.user.firstName}
           lastName={session?.user.lastName}

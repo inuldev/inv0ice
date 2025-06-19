@@ -73,7 +73,7 @@ export default function UserEditProfile({
       <div className="grid gap-2">
         <Label>First Name</Label>
         <Input
-          placeholder="Joe"
+          placeholder="Inul"
           type="text"
           {...register("firstName", { required: true })}
           disabled={isLoading}
@@ -85,7 +85,7 @@ export default function UserEditProfile({
       <div className="grid gap-2">
         <Label>Last Name</Label>
         <Input
-          placeholder="Due"
+          placeholder="Dev"
           type="text"
           {...register("lastName", { required: true })}
           disabled={isLoading}
@@ -118,7 +118,7 @@ export default function UserEditProfile({
       <div className="grid gap-2">
         <Label>Email</Label>
         <Input
-          placeholder="john.due@example.com"
+          placeholder="inuldev@invoice.com"
           type="email"
           value={email ?? ""}
           required
