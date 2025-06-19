@@ -1,18 +1,3 @@
-import { signOut } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-
 export default function DashboardPage() {
-  return (
-    <div className="flex flex-col gap-2">
-      Dashboard Page
-      <Button
-        onClick={async () => {
-          "use server";
-          await signOut();
-        }}
-      >
-        LogOut
-      </Button>
-    </div>
-  );
+  return <div className="p-4 grid gap-6  lg:grid-cols-4">Dashboard Page</div>;
 }
