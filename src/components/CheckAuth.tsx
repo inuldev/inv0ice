@@ -2,64 +2,60 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
-// dashboard
+/**
+ * Proteksi halaman hanya untuk user yang sudah login
+ */
 export async function ProtectedPage() {
   const session = await auth();
 
   if (!session) {
-    // redirect ke halaman login jika user belum login
     redirect("/login");
   }
 
-  if (
-    !session.user.firstName &&
-    !session.user.lastName &&
-    !session.user.currency
-  ) {
-    // redirect ke halaman onboarding jika user belum melengkapi form onboarding
-    redirect("/onboarding");
+  // Pastikan data onboarding sudah lengkap
+  const { firstName, lastName, currency } = session.user;
+
+  if (!firstName || !lastName || !currency) {
+    return redirect("/onboarding");
   }
 
-  return <></>;
+  return null;
 }
 
-// onboarding
+/**
+ * Proteksi halaman hanya untuk user yang belum isi onboarding
+ */
 export async function OnboardingGuard() {
   const session = await auth();
 
   if (!session) {
-    // redirect ke halaman login jika user belum login
     redirect("/login");
   }
 
-  if (
-    session.user.firstName &&
-    session.user.lastName &&
-    session.user.currency
-  ) {
-    // redirect ke halaman dashboard jika user sudah melengkapi form onboarding
-    redirect("/dashboard");
+  const { firstName, lastName, currency } = session.user;
+
+  if (firstName && lastName && currency) {
+    return redirect("/dashboard");
   }
 
-  return <></>;
+  return null;
 }
 
-// login
+/**
+ * Proteksi halaman untuk user yang belum login
+ */
 export async function UnprotectedPage() {
   const session = await auth();
 
   if (session) {
-    if (
-      !session.user.firstName ||
-      !session.user.lastName ||
-      !session.user.currency
-    ) {
-      // redirect ke halaman onboarding jika user belum melengkapi form onboarding
-      redirect("/onboarding");
+    const { firstName, lastName, currency } = session.user;
+
+    if (firstName && lastName && currency) {
+      return redirect("/dashboard");
+    } else {
+      return redirect("/onboarding");
     }
-    // redirect ke halaman dashboard jika user sudah melengkapi form onboarding
-    redirect("/dashboard");
   }
 
-  return <></>;
+  return null;
 }
