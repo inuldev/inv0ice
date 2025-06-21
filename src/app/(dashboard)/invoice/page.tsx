@@ -1,9 +1,18 @@
+import { Suspense } from "react";
+
+import { auth } from "@/lib/auth";
+import Loading from "@/components/Loading";
+
+import InvoiceClientPage from "../_component/InvoiceClientPage";
+
 export default async function InvoicePage() {
+  const session = await auth();
   return (
-    <div className="p-4">
-      <div>
-        <h1 className="font-semibold text-xl">Invoice Page</h1>
-      </div>
-    </div>
+    <Suspense fallback={<Loading />}>
+      <InvoiceClientPage
+        userId={session?.user.id}
+        currency={session?.user.currency}
+      />
+    </Suspense>
   );
 }

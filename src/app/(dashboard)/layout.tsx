@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import Loading from "@/components/Loading";
 import { ProtectedPage } from "@/components/CheckAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
@@ -22,7 +23,7 @@ export default function DashboardLayout({
       <main className="w-full relative">
         {/**header**/}
         <DashboardHeader />
-        <Suspense fallback={<p>Loading...</p>}>{children}</Suspense>
+        <Suspense fallback={<Loading />}>{children}</Suspense>
         <ProtectedPage />
       </main>
     </SidebarProvider>
