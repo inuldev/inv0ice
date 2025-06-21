@@ -32,9 +32,11 @@ export default function PaidInvoicePage() {
       if (response.status === 200) {
         const invoiceData = responseData.data[0];
         setData(invoiceData);
+      } else {
+        toast.error("Something went wrong");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +44,7 @@ export default function PaidInvoicePage() {
 
   useEffect(() => {
     fetchData();
-  }, [invoiceId]);
+  }, []);
 
   const handleUpdate = async () => {
     try {
@@ -65,7 +67,7 @@ export default function PaidInvoicePage() {
         toast.error("Something went wrong");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }

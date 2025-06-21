@@ -10,8 +10,8 @@ export default async function InvoicePage() {
   return (
     <Suspense fallback={<Loading />}>
       <InvoiceClientPage
-        userId={session?.user.id}
         currency={session?.user.currency}
+        userId={session?.user.id}
       />
     </Suspense>
   );

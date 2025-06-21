@@ -121,9 +121,15 @@ export async function GET(request: NextRequest) {
       page,
     });
   } catch (error: any) {
-    return NextResponse.json({
-      message: error || error.message || "Something went wrong",
-    });
+    console.error("Invoice fetch error:", error);
+    return NextResponse.json(
+      {
+        message: error?.message || "Something went wrong",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 

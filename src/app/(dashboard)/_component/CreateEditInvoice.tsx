@@ -36,7 +36,7 @@ export default function CreateEditInvoice({
   lastName,
   email,
   currency,
-  invoiceId, //
+  invoiceId,
 }: ICreateEditInvoice) {
   const {
     register,
@@ -87,6 +87,7 @@ export default function CreateEditInvoice({
         });
       }
     } catch (error) {
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +98,7 @@ export default function CreateEditInvoice({
     if (invoiceId) {
       fetchData();
     }
-  }, [invoiceId]);
+  }, []);
 
   //items
   const { fields, append, remove } = useFieldArray({
@@ -114,7 +115,6 @@ export default function CreateEditInvoice({
 
       const total = quantity * price;
 
-      // console.log(total);
       setValue(`items.${index}.total`, total);
     });
     const sub_total = items.reduce((preve, curr) => preve + curr.total, 0);
@@ -137,8 +137,6 @@ export default function CreateEditInvoice({
   };
 
   const onSubmit = async (data: z.infer<typeof InvoiceSchemaZod>) => {
-    // console.log("onSubmit", data);
-
     //for create invoice
     if (!invoiceId) {
       setIsLoading(true);
@@ -177,7 +175,7 @@ export default function CreateEditInvoice({
         toast.error("Something went wrong");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
