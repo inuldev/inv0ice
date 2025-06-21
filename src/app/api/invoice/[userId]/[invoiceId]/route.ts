@@ -50,7 +50,7 @@ async function generateProfessionalInvoice(
   // Constants
   const PAGE_WIDTH = 210;
   const PAGE_HEIGHT = 297;
-  const MARGIN = 20;
+  const MARGIN = 15;
   const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
   const PRIMARY_COLOR = "#2563eb"; // Professional blue
   const SECONDARY_COLOR = "#64748b"; // Gray
@@ -63,14 +63,14 @@ async function generateProfessionalInvoice(
   // Top accent line
   doc.setFillColor(PRIMARY_COLOR);
   doc.rect(0, 0, PAGE_WIDTH, 4, "F");
-  currentY += 10;
+  currentY += 6;
 
   // Logo section (left side)
   if (settings.invoiceLogo) {
     try {
       // Smaller, more compact logo size
-      const logoMaxWidth = 45;
-      const logoMaxHeight = 15;
+      const logoMaxWidth = 30;
+      const logoMaxHeight = 10;
       doc.addImage(
         settings.invoiceLogo,
         MARGIN,
@@ -87,9 +87,9 @@ async function generateProfessionalInvoice(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24);
   doc.setTextColor(PRIMARY_COLOR);
-  doc.text("INVOICE", PAGE_WIDTH - MARGIN, currentY + 12, { align: "right" });
+  doc.text("INVOICE", PAGE_WIDTH - MARGIN, currentY + 10, { align: "right" });
 
-  currentY += 25;
+  currentY += 20;
 
   // === INVOICE INFO SECTION ===
   // Company info (left side)
@@ -193,7 +193,7 @@ async function generateProfessionalInvoice(
   // === ITEMS TABLE ===
   // Table header
   const tableStartY = currentY;
-  const itemColWidth = 80;
+  const itemColWidth = 85;
   const qtyColWidth = 25;
   const priceColWidth = 35;
   const totalColWidth = 40;
@@ -209,7 +209,9 @@ async function generateProfessionalInvoice(
   doc.setTextColor("#ffffff");
 
   doc.text("DESCRIPTION", MARGIN + 3, currentY + 5);
-  doc.text("QTY", MARGIN + itemColWidth + 3, currentY + 5);
+  doc.text("QTY", MARGIN + itemColWidth + 3, currentY + 5, {
+    align: "center",
+  });
   doc.text("PRICE", totalColumnRightEdge - totalColWidth - 5, currentY + 5, {
     align: "right",
   });
@@ -223,30 +225,54 @@ async function generateProfessionalInvoice(
   doc.setTextColor(TEXT_COLOR);
 
   invoice.items.forEach((item, index) => {
-    // Alternate row colors - smaller row height
+    // Calculate description lines for proper row height
+    const descriptionWidth = itemColWidth - 6; // Available width for description
+    const descriptionLines = doc.splitTextToSize(
+      item.item_name,
+      descriptionWidth
+    );
+    const lineCount = descriptionLines.length;
+    const rowHeight = Math.max(6, lineCount * 3 + 2); // Minimum 6mm, or based on line count
+
+    // Alternate row colors with dynamic height
     if (index % 2 === 0) {
       doc.setFillColor("#f9fafb");
-      doc.rect(MARGIN, currentY, CONTENT_WIDTH, 6, "F");
+      doc.rect(MARGIN, currentY, CONTENT_WIDTH, rowHeight, "F");
     }
 
-    currentY += 4;
+    const rowStartY = currentY + 4;
 
-    doc.text(item.item_name, MARGIN + 3, currentY);
-    doc.text(item.quantity.toString(), MARGIN + itemColWidth + 3, currentY);
+    // Description with text wrapping
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(TEXT_COLOR);
+
+    descriptionLines.forEach((line: string, lineIndex: number) => {
+      doc.text(line, MARGIN + 3, rowStartY + lineIndex * 3);
+    });
+
+    // Other columns positioned at the center of the row
+    const centerY = rowStartY + ((lineCount - 1) * 3) / 2;
+
+    doc.text(item.quantity.toString(), MARGIN + itemColWidth + 3, centerY, {
+      align: "center",
+    });
+    const priceX = totalColumnRightEdge - totalColWidth - 5;
+    const totalX = totalColumnRightEdge;
     doc.text(
       formatCurrency(item.price, invoice.currency as TCurrencyKey),
-      totalColumnRightEdge - totalColWidth - 5,
-      currentY,
+      priceX,
+      centerY,
       { align: "right" }
     );
     doc.text(
       formatCurrency(item.total, invoice.currency as TCurrencyKey),
-      totalColumnRightEdge,
-      currentY,
+      totalX,
+      centerY,
       { align: "right" }
     );
 
-    currentY += 2;
+    currentY += rowHeight;
   });
 
   currentY += 8;
