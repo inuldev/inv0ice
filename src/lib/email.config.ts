@@ -1,5 +1,4 @@
 import * as nodemailer from "nodemailer";
-import { renderToString } from "react-dom/server";
 
 // Konfigurasi nodemailer untuk invoice emails (optimal untuk Gmail)
 const emailConfig = {
@@ -34,10 +33,39 @@ transporter.verify((error) => {
   }
 });
 
-export async function sendEmail(to: string, subject: string, reactHTML: any) {
+// Fungsi sederhana untuk mengkonversi React props ke HTML
+function createEmailHTML(props: any) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; margin-bottom: 20px;">Welcome, ${props.firstName}!</h1>
+
+      <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <p style="margin: 10px 0;"><strong>Invoice No:</strong> ${props.invoiceNo}</p>
+        <p style="margin: 10px 0;"><strong>Due Date:</strong> ${props.dueDate}</p>
+        <p style="margin: 10px 0;"><strong>Total:</strong> ${props.total}</p>
+      </div>
+
+      <a href="${props.invoiceURL}"
+         style="display: inline-block; background-color: #8c00ff; color: white; padding: 12px 24px;
+                text-decoration: none; border-radius: 6px; font-weight: bold;">
+        Download Invoice
+      </a>
+
+      <p style="margin-top: 30px; color: #666; font-size: 14px;">
+        Thank you for your business!
+      </p>
+    </div>
+  `;
+}
+
+export async function sendEmail(
+  to: string,
+  subject: string,
+  templateProps: any
+) {
   try {
-    // Konversi React component ke HTML string
-    const htmlContent = renderToString(reactHTML);
+    // Konversi props ke HTML string
+    const htmlContent = createEmailHTML(templateProps.props);
 
     const mailOptions = {
       from: process.env.EMAIL_FROM!,

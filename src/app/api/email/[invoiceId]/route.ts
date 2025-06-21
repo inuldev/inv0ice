@@ -6,7 +6,6 @@ import { connectDB } from "@/lib/connectDB";
 import { sendEmail } from "@/lib/email.config";
 import { currencyOption, TCurrencyKey } from "@/lib/utils";
 import InvoiceModel, { IInvoice } from "@/models/invoice.model";
-import { InvoiceTemplate } from "@/components/template/SendInvoiceEmail";
 
 export async function POST(
   request: NextRequest,
@@ -36,10 +35,8 @@ export async function POST(
 
     const invoiceURL = `${process.env.DOMAIN}/api/invoice/${session.user.id}/${invoiceId}`;
 
-    const emailResponse = await sendEmail(
-      invoiceData.to.email,
-      subject,
-      InvoiceTemplate({
+    const emailResponse = await sendEmail(invoiceData.to.email, subject, {
+      props: {
         firstName: session.user.firstName,
         invoiceNo: invoiceData.invoice_no,
         dueDate: format(invoiceData.due_date, "PPP"),
@@ -47,8 +44,8 @@ export async function POST(
           invoiceData.total
         }`,
         invoiceURL: invoiceURL,
-      })
-    );
+      },
+    });
 
     if (emailResponse.success) {
       return NextResponse.json({
