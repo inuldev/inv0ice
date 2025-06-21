@@ -7,16 +7,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, DeleteIcon } from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
 import { InvoiceSchemaZod } from "@/lib/zodSchema";
+import { cn, formatCurrency, TCurrencyKey } from "@/lib/utils";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
+import { CurrencySelector } from "@/components/ui/currency-selector";
 import {
   Popover,
   PopoverContent,
@@ -63,7 +64,7 @@ export default function CreateEditInvoice({
         email: email as string,
       },
       tax_percentage: 0,
-      currency: currency,
+      currency: (currency as TCurrencyKey) || "USD",
       discount: 0,
       sub_total: 0,
       total: 0,
@@ -192,10 +193,13 @@ export default function CreateEditInvoice({
     setValue("total", totalAmount);
   }, [totalAmount]);
 
-  const totalAmountInCurrencyFormat = new Intl.NumberFormat("en-us", {
-    style: "currency",
-    currency: currency || watch("currency") || "USD",
-  }).format(totalAmount);
+  const selectedCurrency = (watch("currency") ||
+    currency ||
+    "USD") as TCurrencyKey;
+  const totalAmountInCurrencyFormat = formatCurrency(
+    totalAmount,
+    selectedCurrency
+  );
 
   return (
     <form
@@ -314,6 +318,26 @@ export default function CreateEditInvoice({
             <p className="text-xs text-red-500">{errors.due_date.message}</p>
           )}
         </div>
+      </div>
+
+      {/* Currency Selector */}
+      <div className="grid gap-2 max-w-sm">
+        <Label>Currency</Label>
+        <Controller
+          name="currency"
+          control={control}
+          render={({ field }) => (
+            <CurrencySelector
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={isLoading}
+              placeholder="Select invoice currency"
+            />
+          )}
+        />
+        {errors.currency && (
+          <p className="text-xs text-red-500">{errors.currency.message}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:gap-6">

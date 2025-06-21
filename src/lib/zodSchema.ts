@@ -22,7 +22,10 @@ export const InvoiceSchemaZod = z.object({
   invoice_no: z.string().min(1, { message: "Invoice no. is required" }),
   invoice_date: z.date({ required_error: "Invoice date is required" }),
   due_date: z.date({ required_error: "Invoice due date is required" }),
-  currency: z.string().min(1, { message: "Currency is required" }).optional(),
+  currency: z.enum(availableCurrencies, {
+    required_error: "Currency is required",
+    invalid_type_error: "Please select a valid currency",
+  }),
   from: z.object({
     name: z
       .string()

@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import SubmitButton from "@/components/SubmitButton";
 import {
   Card,
   CardContent,
@@ -15,15 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
-import { currencyOption } from "@/lib/utils";
+import SubmitButton from "@/components/SubmitButton";
+import { CurrencySelector } from "@/components/ui/currency-selector";
 import { onboardingSchema, type OnboardingFormData } from "@/lib/zodSchema";
 
 export default function OnboardingPage() {
@@ -122,22 +115,12 @@ export default function OnboardingPage() {
                 name="currency"
                 control={control}
                 render={({ field }) => (
-                  <Select
+                  <CurrencySelector
+                    value={field.value}
                     onValueChange={field.onChange}
-                    defaultValue="USD"
                     disabled={isLoading}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(currencyOption).map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select your preferred currency"
+                  />
                 )}
               />
             </div>

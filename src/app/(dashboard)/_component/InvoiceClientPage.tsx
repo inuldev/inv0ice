@@ -8,11 +8,12 @@ import { useEffect, useState } from "react";
 import { MoreVerticalIcon } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { cn } from "@/lib/utils";
 import Loading from "@/components/Loading";
-import { Badge } from "@/components/ui/badge";
 import { IInvoice } from "@/models/invoice.model";
 import { DataTable } from "@/components/DataTable";
+import { cn, formatCurrency, TCurrencyKey } from "@/lib/utils";
+
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -118,12 +119,10 @@ export default function InvoiceClientPage({
       accessorKey: "total",
       header: "Amount",
       cell: ({ row }) => {
-        const totalAmountInCurrencyFormat = new Intl.NumberFormat("en-us", {
-          style: "currency",
-          currency: currency,
-        }).format(row.original.total);
-
-        return totalAmountInCurrencyFormat;
+        const invoiceCurrency = (row.original.currency ||
+          currency ||
+          "USD") as TCurrencyKey;
+        return formatCurrency(row.original.total, invoiceCurrency);
       },
     },
     {
