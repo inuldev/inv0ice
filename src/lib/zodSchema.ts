@@ -19,16 +19,16 @@ export const onboardingSchema = z.object({
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 
 export const InvoiceSchemaZod = z.object({
-  invoice_no: z.string().min(1, { message: "invoice no. required" }),
-  invoice_date: z.date(),
-  due_date: z.date(),
+  invoice_no: z.string().min(1, { message: "Invoice no. is required" }),
+  invoice_date: z.date({ required_error: "Invoice date is required" }),
+  due_date: z.date({ required_error: "Invoice due date is required" }),
   currency: z.string().min(1, { message: "Currency is required" }).optional(),
   from: z.object({
     name: z
       .string()
-      .min(3, { message: "name is required" })
-      .max(100, { message: "name is max 100 character" }),
-    email: z.string().email({ message: "email is required" }),
+      .min(3, { message: "Name is required" })
+      .max(100, { message: "Name is max 100 character" }),
+    email: z.string().email({ message: "Email is required" }),
     address1: z.string().min(5, { message: "Address is required" }),
     address2: z.string().optional(),
     address3: z.string().optional(),
@@ -37,9 +37,9 @@ export const InvoiceSchemaZod = z.object({
   to: z.object({
     name: z
       .string()
-      .min(3, { message: "name is required" })
-      .max(100, { message: "name is max 100 character" }),
-    email: z.string().email({ message: "email is required" }),
+      .min(3, { message: "Name is required" })
+      .max(100, { message: "Name is max 100 character" }),
+    email: z.string().email({ message: "Email is required" }),
     address1: z.string().min(5, { message: "Address is required" }),
     address2: z.string().optional(),
     address3: z.string().optional(),
@@ -49,11 +49,11 @@ export const InvoiceSchemaZod = z.object({
     z.object({
       item_name: z
         .string()
-        .min(3, { message: "item name is required" })
+        .min(3, { message: "Item name is required" })
         .max(100, { message: "Max character will be 100" }),
       quantity: z.number().min(0, { message: "Quantity can't be negative" }),
-      price: z.number().min(0, { message: "price can't be negative" }),
-      total: z.number().min(0, { message: "total can't be negative" }),
+      price: z.number().min(0, { message: "Price can't be negative" }),
+      total: z.number().min(0, { message: "Total can't be negative" }),
     })
   ),
 

@@ -196,7 +196,7 @@ export default function CreateEditInvoice({
 
   const totalAmountInCurrencyFormat = new Intl.NumberFormat("en-us", {
     style: "currency",
-    currency: currency || watch("currency") || "IDR",
+    currency: currency || watch("currency") || "USD",
   }).format(totalAmount);
 
   return (

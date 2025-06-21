@@ -164,7 +164,7 @@ export async function PUT(request: NextRequest) {
       invoice_no,
       invoice_date,
       due_date,
-      currency,
+      currency: currency ?? "USD",
       from,
       to,
       items,
@@ -178,10 +178,7 @@ export async function PUT(request: NextRequest) {
 
     await connectDB();
 
-    const updateInvoice = await InvoiceModel.findByIdAndUpdate(
-      invoiceId,
-      payload
-    );
+    await InvoiceModel.findByIdAndUpdate(invoiceId, payload);
 
     return NextResponse.json({
       message: "Invoice updated successfully",

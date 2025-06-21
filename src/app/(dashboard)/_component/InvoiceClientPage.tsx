@@ -35,8 +35,8 @@ interface IInvoiceClientPage {
 }
 
 export default function InvoiceClientPage({
-  userId,
   currency,
+  userId,
 }: IInvoiceClientPage) {
   const [data, setData] = useState<IInvoice[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -47,7 +47,7 @@ export default function InvoiceClientPage({
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/invoice?page=${page}`);
+      const response = await fetch(`/api/invoice/${userId}?page=${page}`);
       const responseData = await response.json();
 
       if (response.status === 200) {
@@ -65,15 +65,15 @@ export default function InvoiceClientPage({
 
   useEffect(() => {
     fetchData();
-  }, [page]);
+  }, [page, userId]);
 
   const handleSendEmail = async (invoiceId: string, subject: string) => {
     try {
       toast.loading("Please wait...");
-      const response = await fetch(`/api/email/${invoiceId}`, {
+      const response = await fetch(`/api/email/${userId}/${invoiceId}`, {
         method: "POST",
         body: JSON.stringify({
-          subject: subject,
+          subject,
         }),
       });
 
@@ -120,7 +120,7 @@ export default function InvoiceClientPage({
       cell: ({ row }) => {
         const totalAmountInCurrencyFormat = new Intl.NumberFormat("en-us", {
           style: "currency",
-          currency: currency,
+          currency: currency || "USD",
         }).format(row.original.total);
 
         return totalAmountInCurrencyFormat;
@@ -210,20 +210,18 @@ export default function InvoiceClientPage({
                     <PaginationPrevious href="#" onClick={() => setPage(1)} />
                   </PaginationItem>
 
-                  {new Array(totalPage)
-                    .fill(null)
-                    .map((item, index: number) => {
-                      return (
-                        <PaginationItem key={index}>
-                          <PaginationLink
-                            href="#"
-                            onClick={() => setPage(index + 1)}
-                          >
-                            {index + 1}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    })}
+                  {new Array(totalPage).fill(null).map((index: number) => {
+                    return (
+                      <PaginationItem key={index}>
+                        <PaginationLink
+                          href="#"
+                          onClick={() => setPage(index + 1)}
+                        >
+                          {index + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
 
                   <PaginationItem>
                     <PaginationNext
