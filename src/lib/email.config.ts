@@ -33,28 +33,108 @@ transporter.verify((error) => {
   }
 });
 
-// Fungsi sederhana untuk mengkonversi React props ke HTML
+// Professional email template yang matching dengan PDF design
 function createEmailHTML(props: any) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333; margin-bottom: 20px;">Welcome, ${props.firstName}!</h1>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Invoice ${props.invoiceNo}</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
 
-      <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-        <p style="margin: 10px 0;"><strong>Invoice No:</strong> ${props.invoiceNo}</p>
-        <p style="margin: 10px 0;"><strong>Due Date:</strong> ${props.dueDate}</p>
-        <p style="margin: 10px 0;"><strong>Total:</strong> ${props.total}</p>
+        <!-- Header with accent line -->
+        <div style="height: 4px; background-color: #2563eb;"></div>
+
+        <!-- Main content -->
+        <div style="padding: 40px 30px;">
+
+          <!-- Header section -->
+          <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: #2563eb; font-size: 28px; font-weight: bold; margin: 0 0 10px 0;">
+              INVOICE
+            </h1>
+            <p style="color: #64748b; font-size: 16px; margin: 0;">
+              Hello ${props.firstName}, your invoice is ready!
+            </p>
+          </div>
+
+          <!-- Invoice details card -->
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+            <h2 style="color: #1e293b; font-size: 18px; font-weight: bold; margin: 0 0 20px 0; text-align: center;">
+              Invoice Details
+            </h2>
+
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">Invoice No:</span>
+                </td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right;">
+                  <span style="color: #1e293b; font-size: 14px; font-weight: bold;">${props.invoiceNo}</span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">Due Date:</span>
+                </td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right;">
+                  <span style="color: #1e293b; font-size: 14px; font-weight: bold;">${props.dueDate}</span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">Total Amount:</span>
+                </td>
+                <td style="padding: 12px 0; text-align: right;">
+                  <span style="color: #2563eb; font-size: 18px; font-weight: bold;">${props.total}</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- CTA Button -->
+          <div style="text-align: center; margin-bottom: 40px;">
+            <a href="${props.invoiceURL}"
+               style="display: inline-block; background-color: #2563eb; color: #ffffff;
+                      padding: 16px 32px; text-decoration: none; border-radius: 8px;
+                      font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              📄 Download Invoice PDF
+            </a>
+          </div>
+
+          <!-- Additional info -->
+          <div style="background-color: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center;">
+              <span style="color: #92400e; font-size: 20px; margin-right: 10px;">⚠️</span>
+              <div>
+                <p style="color: #92400e; font-size: 14px; font-weight: bold; margin: 0 0 5px 0;">
+                  Payment Reminder
+                </p>
+                <p style="color: #92400e; font-size: 13px; margin: 0;">
+                  Please ensure payment is made by the due date to avoid any late fees.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="text-align: center; padding-top: 30px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 14px; margin: 0 0 10px 0;">
+              Thank you for your business! 🙏
+            </p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+              This is an automated email. Please do not reply to this message.
+            </p>
+          </div>
+
+        </div>
       </div>
-
-      <a href="${props.invoiceURL}"
-         style="display: inline-block; background-color: #8c00ff; color: white; padding: 12px 24px;
-                text-decoration: none; border-radius: 6px; font-weight: bold;">
-        Download Invoice
-      </a>
-
-      <p style="margin-top: 30px; color: #666; font-size: 14px;">
-        Thank you for your business!
-      </p>
-    </div>
+    </body>
+    </html>
   `;
 }
 
@@ -72,7 +152,20 @@ export async function sendEmail(
       to: to,
       subject: subject,
       html: htmlContent,
-      text: `Invoice baru telah dibuat. Silakan buka email untuk melihat detail lengkap.`,
+      text: `
+Invoice ${templateProps.props.invoiceNo} - ${templateProps.props.total}
+
+Hello ${templateProps.props.firstName},
+
+Your invoice is ready for download:
+- Invoice No: ${templateProps.props.invoiceNo}
+- Due Date: ${templateProps.props.dueDate}
+- Total Amount: ${templateProps.props.total}
+
+Download your invoice: ${templateProps.props.invoiceURL}
+
+Thank you for your business!
+      `.trim(),
     };
 
     const result = await transporter.sendMail(mailOptions);

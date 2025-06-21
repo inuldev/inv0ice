@@ -4,7 +4,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/connectDB";
 import { sendEmail } from "@/lib/email.config";
-import { currencyOption, TCurrencyKey } from "@/lib/utils";
+import { formatCurrency, TCurrencyKey } from "@/lib/utils";
 import InvoiceModel, { IInvoice } from "@/models/invoice.model";
 
 export async function POST(
@@ -40,9 +40,10 @@ export async function POST(
         firstName: session.user.firstName,
         invoiceNo: invoiceData.invoice_no,
         dueDate: format(invoiceData.due_date, "PPP"),
-        total: `${currencyOption[invoiceData.currency as TCurrencyKey]} ${
-          invoiceData.total
-        }`,
+        total: `${formatCurrency(
+          invoiceData.total,
+          invoiceData.currency as TCurrencyKey
+        )}`,
         invoiceURL: invoiceURL,
       },
     });

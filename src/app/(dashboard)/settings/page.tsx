@@ -3,16 +3,20 @@
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { Upload, Check, AlertCircle } from "lucide-react";
 
 import imagebase64 from "@/lib/imagebase64";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type TSignatureData = {
   name: string;
@@ -117,97 +121,200 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-4">
-      <div>
-        <h1 className="font-semibold text-xl">Settings</h1>
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <p className="text-muted-foreground">
+          Configure your invoice branding and signature settings
+        </p>
       </div>
-      <Accordion type="single">
-        {/**Invoice Logo */}
-        <AccordionItem value="Invoice-Logo">
-          <AccordionTrigger className="font-semibold text-base cursor-pointer">
-            Invoice Logo
-          </AccordionTrigger>
-          <AccordionContent>
+
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Both logo and signature are required to generate PDF invoices. Make
+          sure to upload both before creating invoices.
+        </AlertDescription>
+      </Alert>
+
+      <div className="grid gap-6">
+        {/* Invoice Logo Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Invoice Logo
+            </CardTitle>
+            <CardDescription>
+              Upload your company logo that will appear on invoices. Recommended
+              size: 300x100px (3:1 ratio)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <form
-              className="w-full grid gap-2"
+              className="space-y-4"
               onSubmit={(e) => handleSubmit(e, { logo })}
             >
-              <Input
-                type="file"
-                className="max-w-sm w-full"
-                onChange={handleOnChangeLogo}
-                required
-                disabled={isLoading}
-              />
-              <div className="w-full max-w-xs">
-                {logo ? (
-                  <Image
-                    className="aspect-video h-20 border-2 border-dotted max-h-20 object-scale-down"
-                    src={logo}
-                    width={250}
-                    height={96}
-                    alt="Invoice logo"
-                  />
-                ) : (
-                  <div className="aspect-video h-20 border-2 border-dotted flex justify-center items-center rounded-lg">
-                    <p className="text-center text-muted-foreground">No Data</p>
-                  </div>
-                )}
+              <div className="space-y-2">
+                <Label htmlFor="logo-upload">Logo File</Label>
+                <Input
+                  id="logo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleOnChangeLogo}
+                  disabled={isLoading}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Supported formats: JPG, PNG, SVG. Max size: 2MB
+                </p>
               </div>
-              <Button className="w-fit" disabled={isLoading}>
-                {isLoading ? "Please wait..." : "Save"}
+
+              <div className="space-y-2">
+                <Label>Preview</Label>
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 bg-muted/10">
+                  {logo ? (
+                    <div className="flex items-center justify-center">
+                      <Image
+                        src={logo}
+                        width={200}
+                        height={67}
+                        alt="Invoice logo preview"
+                        className="max-h-16 w-auto object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                      <Upload className="h-8 w-8 mb-2" />
+                      <p className="text-sm">No logo uploaded</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading || !logo}
+                className="w-full sm:w-auto"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Update Logo
+                  </>
+                )}
               </Button>
             </form>
-          </AccordionContent>
-        </AccordionItem>
+          </CardContent>
+        </Card>
 
-        {/***Signature in invoice */}
-        <AccordionItem value="Signature-invoice">
-          <AccordionTrigger className="font-semibold text-base cursor-pointer">
-            {" "}
-            Invoice Signature
-          </AccordionTrigger>
-          <AccordionContent>
+        {/* Invoice Signature Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Invoice Signature
+            </CardTitle>
+            <CardDescription>
+              Add your signature and name that will appear at the bottom of
+              invoices
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <form
-              className="w-full grid gap-2"
+              className="space-y-4"
               onSubmit={(e) => handleSubmit(e, { signature: signatureData })}
             >
-              <Input
-                type="text"
-                placeholder="Enter your signature name"
-                value={signatureData.name}
-                onChange={onChangeSignature}
-                name="name"
-                disabled={isLoading}
-              />
-              <Input
-                type="file"
-                className="max-w-sm w-full"
-                onChange={handleSignatureImage}
-                disabled={isLoading}
-              />
-              <div className="w-full max-w-xs">
-                {signatureData.image ? (
-                  <Image
-                    className="aspect-video h-20 border-2 border-dotted max-h-20 object-scale-down"
-                    src={signatureData.image}
-                    width={250}
-                    height={96}
-                    alt="Signature sign"
-                  />
-                ) : (
-                  <div className="aspect-video h-20 border-2 border-dotted flex justify-center items-center rounded-lg">
-                    <p className="text-center text-muted-foreground">No Data</p>
-                  </div>
-                )}
+              <div className="space-y-2">
+                <Label htmlFor="signature-name">Signature Name</Label>
+                <Input
+                  id="signature-name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={signatureData.name}
+                  onChange={onChangeSignature}
+                  name="name"
+                  disabled={isLoading}
+                />
               </div>
-              <Button className="w-fit" disabled={isLoading}>
-                {isLoading ? "Please wait..." : "Save"}
+
+              <div className="space-y-2">
+                <Label htmlFor="signature-upload">Signature Image</Label>
+                <Input
+                  id="signature-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSignatureImage}
+                  disabled={isLoading}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a clear signature image. Recommended: transparent
+                  background PNG
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Preview</Label>
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 bg-muted/10">
+                  {signatureData.image || signatureData.name ? (
+                    <div className="space-y-3">
+                      {signatureData.image && (
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src={signatureData.image}
+                            width={150}
+                            height={50}
+                            alt="Signature preview"
+                            className="max-h-12 w-auto object-contain"
+                          />
+                        </div>
+                      )}
+                      {signatureData.name && (
+                        <div className="text-center">
+                          <p className="font-medium text-sm border-t pt-2 inline-block px-4">
+                            {signatureData.name}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                      <Upload className="h-8 w-8 mb-2" />
+                      <p className="text-sm">No signature uploaded</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={
+                  isLoading || (!signatureData.name && !signatureData.image)
+                }
+                className="w-full sm:w-auto"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Update Signature
+                  </>
+                )}
               </Button>
             </form>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
