@@ -28,7 +28,7 @@ export default async function HomePage() {
   redirect("/dashboard");
 }
 
-export function Hero() {
+function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center py-12 lg:py-20">
       <div className="text-center">
@@ -132,7 +132,7 @@ export function Hero() {
   );
 }
 
-export function Navbar() {
+function Navbar() {
   return (
     <div className="flex items-center justify-between py-5 gap-2">
       <Logo />
@@ -145,7 +145,7 @@ export function Navbar() {
   );
 }
 
-export function OnboardingRedirect() {
+function OnboardingRedirect() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-6">
       <h2 className="text-2xl font-semibold mb-4">Welcome!</h2>
