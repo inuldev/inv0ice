@@ -215,7 +215,9 @@ async function generateProfessionalInvoice(
   doc.text("PRICE", totalColumnRightEdge - totalColWidth - 5, currentY + 5, {
     align: "right",
   });
-  doc.text("TOTAL", totalColumnRightEdge, currentY + 5, { align: "right" });
+  doc.text("TOTAL", totalColumnRightEdge - 2, currentY + 5, {
+    align: "right",
+  });
 
   currentY += 8;
 
@@ -375,13 +377,13 @@ async function generateProfessionalInvoice(
 
   // === SIGNATURE SECTION ===
   if (settings.signature?.image || settings.signature?.name) {
-    // Move to bottom area if there's space, otherwise continue from current position
-    const signatureY = Math.max(currentY + 15, PAGE_HEIGHT - 50);
+    // Position signature closer to content, not forced to bottom
+    const signatureY = currentY + 10;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(SECONDARY_COLOR);
-    doc.text("Authorized Signature:", PAGE_WIDTH - MARGIN - 50, signatureY);
+    doc.text("Authorized Signature:", PAGE_WIDTH - MARGIN - 45, signatureY);
 
     if (settings.signature?.image) {
       try {
