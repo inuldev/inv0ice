@@ -101,14 +101,14 @@ export default function InvoiceClientPage({
       accessorKey: "invoice_date",
       header: "Date",
       cell: ({ row }) => {
-        return format(row.original.invoice_date, "PP");
+        return format(row.original.invoice_date, "dd MMM yyyy");
       },
     },
     {
       accessorKey: "due_date",
       header: "Due",
       cell: ({ row }) => {
-        return format(row.original.due_date, "PP");
+        return format(row.original.due_date, "dd MMM yyyy");
       },
     },
     {
@@ -146,7 +146,7 @@ export default function InvoiceClientPage({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/api/invoice/${userId}/${invoiceId}`)
+                  window.open(`/api/invoice/${userId}/${invoiceId}`, "_blank")
                 }
               >
                 View

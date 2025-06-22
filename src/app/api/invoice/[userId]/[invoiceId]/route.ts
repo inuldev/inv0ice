@@ -135,7 +135,7 @@ async function generateProfessionalInvoice(
   doc.setFont("helvetica", "bold");
   doc.setTextColor(TEXT_COLOR);
   doc.text(
-    format(invoice.invoice_date, "MMM dd, yyyy"),
+    format(invoice.invoice_date, "dd MMM yyyy"),
     PAGE_WIDTH - MARGIN,
     invoiceDetailsY + 4,
     { align: "right" }
@@ -147,7 +147,7 @@ async function generateProfessionalInvoice(
   doc.setFont("helvetica", "bold");
   doc.setTextColor(TEXT_COLOR);
   doc.text(
-    format(invoice.due_date, "MMM dd, yyyy"),
+    format(invoice.due_date, "dd MMM yyyy"),
     PAGE_WIDTH - MARGIN,
     invoiceDetailsY + 8,
     { align: "right" }

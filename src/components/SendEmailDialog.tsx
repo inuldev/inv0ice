@@ -47,7 +47,7 @@ Please find attached your invoice ${invoice.invoice_no} for ${formatCurrency(
       invoice.currency as TCurrencyKey
     )}.
 
-Due Date: ${format(invoice.due_date, "PPP")}
+Due Date: ${format(invoice.due_date, "dd MMM yyyy")}
 
 You can download the invoice PDF using the link in the email.
 
@@ -133,7 +133,7 @@ Best regards`,
               <div>
                 <span className="text-muted-foreground">Due Date:</span>
                 <p className="font-medium">
-                  {format(invoice.due_date, "MMM dd, yyyy")}
+                  {format(invoice.due_date, "dd MMM yyyy")}
                 </p>
               </div>
               <div>

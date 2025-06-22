@@ -146,7 +146,7 @@ export default function RecentInvoices({
                     </p>
                   </div>
                   <p className="text-xs text-gray-400">
-                    {format(new Date(invoice.invoice_date), "MMM dd, yyyy")}
+                    {format(new Date(invoice.invoice_date), "dd MMM yyyy")}
                   </p>
                 </div>
 
@@ -157,10 +157,15 @@ export default function RecentInvoices({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link href={`/api/invoice/${userId}/${invoice._id}`}>
-                        View PDF
-                      </Link>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        window.open(
+                          `/api/invoice/${userId}/${invoice._id}`,
+                          "_blank"
+                        )
+                      }
+                    >
+                      View PDF
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href={`/invoice/edit/${invoice._id}`}>Edit</Link>

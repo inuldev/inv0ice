@@ -80,7 +80,7 @@ export function InvoicePreview({ invoice, userId }: InvoicePreviewProps) {
               Invoice #{invoice.invoice_no}
             </CardTitle>
             <p className="text-muted-foreground mt-1">
-              Created on {format(invoice.invoice_date, "MMM dd, yyyy")}
+              Created on {format(invoice.invoice_date, "dd MMM yyyy")}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -124,16 +124,14 @@ export function InvoicePreview({ invoice, userId }: InvoicePreviewProps) {
               Invoice Date
             </h3>
             <p className="text-sm">
-              {format(invoice.invoice_date, "MMM dd, yyyy")}
+              {format(invoice.invoice_date, "dd MMM yyyy")}
             </p>
           </div>
           <div>
             <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">
               Due Date
             </h3>
-            <p className="text-sm">
-              {format(invoice.due_date, "MMM dd, yyyy")}
-            </p>
+            <p className="text-sm">{format(invoice.due_date, "dd MMM yyyy")}</p>
           </div>
           <div>
             <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">

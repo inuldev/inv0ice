@@ -245,7 +245,7 @@ export default function CreateEditInvoice({
                   disabled={isLoading}
                 >
                   {getValues("invoice_date") ? (
-                    format(getValues("invoice_date"), "PPP")
+                    format(getValues("invoice_date"), "dd MMM yyyy")
                   ) : (
                     <span>Pick a date</span>
                   )}
@@ -292,7 +292,7 @@ export default function CreateEditInvoice({
                   disabled={isLoading}
                 >
                   {watch("due_date") ? (
-                    format(watch("due_date"), "PPP")
+                    format(watch("due_date"), "dd MMM yyyy")
                   ) : (
                     <span>Due date</span>
                   )}

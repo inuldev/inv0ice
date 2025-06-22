@@ -39,7 +39,7 @@ export async function POST(
       props: {
         firstName: session.user.firstName,
         invoiceNo: invoiceData.invoice_no,
-        dueDate: format(invoiceData.due_date, "PPP"),
+        dueDate: format(invoiceData.due_date, "dd MMM yyyy"),
         total: `${formatCurrency(
           invoiceData.total,
           invoiceData.currency as TCurrencyKey
